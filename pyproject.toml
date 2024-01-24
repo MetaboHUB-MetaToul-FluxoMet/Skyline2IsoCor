@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 pandas = "^2.1.4"
 
+[tool.poetry.scripts]
+skyline2isocor = 'skyline2isocor.cli:start_cli'
 
 [build-system]
 requires = ["poetry-core"]

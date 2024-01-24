@@ -54,6 +54,7 @@ def process(args):
     print(f"Final dataframe:\n{isocor_data}")
     isocor_data.to_csv(args.output, sep="\t", index=False)
 
-parser = parse_args()
-args = parser.parse_args()
-process(args)
+def start_cli():
+    parser = parse_args()
+    args = parser.parse_args()
+    process(args)
