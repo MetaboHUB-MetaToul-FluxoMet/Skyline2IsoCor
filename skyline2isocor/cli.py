@@ -33,7 +33,7 @@ def process(args):
 
     try:
         input_path = Path(args.input)
-        data = pd.read_csv(str(input_path), sep=",")
+        data = pd.read_csv(str(input_path), sep=";")
     except Exception:
         print(f"There was an error while reading the data. Data path: {args.input}")
         raise
