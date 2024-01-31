@@ -51,6 +51,7 @@ def process(args):
     isocor_data = data.rename(column_mapping, axis=1).drop("Product Mz", axis=1)
     isocor_data.insert(loc=2, column="derivative", value="")
     isocor_data = isocor_data.apply(_get_isotopologue_number, axis=1)
+    isocor_data = isocor_data.fillna(0)
     print(f"Final dataframe:\n{isocor_data}")
     isocor_data.to_csv(args.output, sep="\t", index=False)
 
