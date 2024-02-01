@@ -10,11 +10,11 @@ def parse_args():
     )
 
     parser.add_argument(
-        "input", type=str,
-        help='Path to Skyline output file'
+        "-i","--input", type=str,
+        help='Path to input file to convert'
     )
     parser.add_argument(
-        'output', type=str,
+        '-o', '--output', type=str,
         help='Path to output IsoCor input data'
     )
 
