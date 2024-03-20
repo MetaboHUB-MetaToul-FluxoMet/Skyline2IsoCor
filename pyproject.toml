@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skyline2isocor"
-version = "0.3.0"
+version = "1.0.0"
 description = "Convert skyline output to IsoCor input format"
 authors = ["legregam <legregam@insa-toulouse.fr>"]
 readme = "README.md"
