@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
+import re
 
 import pandas as pd
 
@@ -20,14 +21,25 @@ def parse_args():
 
     return parser
 
-def _get_isotopologue_number(row):
+# Singly charged ions, unlabelled ([M-H]) or with a number of 13C ([M3C13-1H])
+ADDUCT_PATTERN = re.compile(r"\[M(?:(\d+)C13)?[+-]1?H\]")
 
-    original = row["isotopologue"]
-    if original == "[M-H]" or original == "[M+H]":
-        row["isotopologue"] = "0"
-        return row
-    row["isotopologue"] = original[2:].split("C")[0]
-    return row
+
+def _get_isotopologue_number(adduct, molecule):
+    """
+    Get the isotopologue number from a Skyline product adduct
+    :param adduct: Skyline product adduct, e.g. [M-H] or [M3C13-1H]
+    :param molecule: molecule name, used in the error message
+    :return: number of 13C in the isotopologue
+    """
+
+    match = ADDUCT_PATTERN.fullmatch(adduct)
+    if match is None:
+        raise ValueError(
+            f"Unsupported Product Adduct '{adduct}' for molecule '{molecule}'. "
+            f"Expected [M-H], [M+H] or a 13C-labelled form such as [M3C13-1H]"
+        )
+    return int(match.group(1) or 0)
 
 def validate_file_extension(path):
     """
@@ -67,7 +79,10 @@ def process(args):
     }
     isocor_data = data.rename(column_mapping, axis=1).drop("Product Mz", axis=1)
     isocor_data.insert(loc=2, column="derivative", value="")
-    isocor_data = isocor_data.apply(func=_get_isotopologue_number, axis=1)
+    isocor_data["isotopologue"] = [
+        _get_isotopologue_number(adduct, molecule)
+        for adduct, molecule in zip(isocor_data["isotopologue"], isocor_data["metabolite"])
+    ]
     isocor_data = isocor_data.fillna(0)
     print(f"Final dataframe:\n{isocor_data}")
     isocor_data.to_csv(args.output, sep="\t", index=False)
